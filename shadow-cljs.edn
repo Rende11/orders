@@ -1,0 +1,13 @@
+{:source-paths ["src-ui"]
+ :dependencies [[reagent "1.0.0"]
+                [re-frame "1.2.0"]
+                [re-frisk "1.5.1"]
+                [cljs-ajax "0.8.3"]
+                [day8.re-frame/http-fx "0.2.3"]]
+ :nrepl        {:port 4444}
+ :dev-http     {3030 "public"}
+ :builds
+ {:app
+  {:devtools {:preloads [re-frisk.preload]}
+   :target :browser
+   :modules {:main {:init-fn orders.app/init}}}}}

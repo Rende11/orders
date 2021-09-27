@@ -1,21 +1,32 @@
 (ns orders.web
-  (:require [ring.middleware.json :refer [wrap-json-response]]
+  (:require [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
+            [ring.util.response :refer [resource-response]]
             [compojure.core :refer [defroutes GET POST context]]
             [compojure.route :as route]
-            [orders.api.order :as order]
-            [clojure.java.io :as io]))
+            [orders.api.order :as order]))
 
 
 (defroutes app-routes
-  (GET "/testapp" [] (slurp (io/resource "index.html")))
+  (GET "/" [] (resource-response "index.html"))
+  (GET "/testapp" [] (resource-response "index.html"))
   (context "/api" []
     (GET "/orders" req (order/index req))
     (GET "/orders/new" req (order/new req))
     (POST "/orders" req (order/create req)))
+  (route/files "/")
+  (route/resources "/")       
   (route/not-found "<h1>Resource not found</h1>"))
 
 (def app
   (-> app-routes
-      wrap-json-response))
+      (wrap-json-response)
+      (wrap-json-body {:keywords? true})))
+
+
+(comment
+
+  (app {:request-method :get
+        :uri "/js/main.js"})
+  )
 
 

@@ -28,9 +28,11 @@
   {:status 200
    :body "Form for create"})
 
-(defn create [req]
-  {:status 201
-   :body "Created"})
+(defn create [{:keys [conn body] :as req}]
+  (def r req)
+  (let [db (d/db conn)]
+    {:status 201
+     :body "Created"}))
 
 
 
@@ -43,7 +45,13 @@
 
   (def conn (d/connect client {:db-name "orders"}))
 
+  (d/transact )
 
+
+
+
+
+  
   (d/q
                     '[:find ?title ?desc
                       ?author-name ?author-family
