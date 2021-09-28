@@ -17,6 +17,10 @@
                     :order/desc "Feature desc"
                     :order/author "bruceid"
                     :order/performer "lukeid"}
+                   {:order/title "Fix bug"
+                    :order/desc "Submit button on the index page doesn't works"
+                    :order/author "lukeid"
+                    :order/performer "bruceid"}
                    {:order/title "One more!"
                     :order/desc "One more time..."}])
 

@@ -5,9 +5,9 @@
 
 (defn index [{:keys [conn] :as req}]
   (let [db (d/db conn)
-        orders-res (d/q
-                    '[:find ?title ?desc ?author-name ?author-family ?performer-name ?performer-family
-                      :keys title desc a-name a-family p-nam p-family
+        orders (d/q
+                    '[:find ?id ?title ?desc ?author-name ?author-family ?performer-name ?performer-family
+                      :keys order/id order/title order/desc author/name author/family perf/name perf/family
                       :where
                       [?id :order/title ?title]
                       [?id :order/desc ?desc]
@@ -21,7 +21,7 @@
                       [?pid :user/family ?performer-family]]
                     db)]
     {:status 200
-     :body orders-res}))
+     :body orders}))
 
 
 (defn new [req]

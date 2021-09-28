@@ -1,12 +1,14 @@
 (ns orders.app
   (:require [reagent.dom :as rdom]
             [re-frame.core :as rf]
-            [orders.model :as m]))
+            [orders.model :as m]
+            ))
 
-(defn app
-  []
-  [:div
-   "Hello from reagent"])
+
+(defn app []
+  (let [page (rf/subscribe [::m/current-page])]
+    [:div
+     [@page]]))
 
 
 (defn ^:dev/after-load render []
