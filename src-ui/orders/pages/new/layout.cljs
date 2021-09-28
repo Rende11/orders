@@ -1,5 +1,6 @@
 (ns orders.pages.new.layout
-  (:require [re-frame.core :as rf]))
+  (:require [re-frame.core :as rf]
+            [reitit.frontend.easy :as rfe]))
 
 
 
@@ -11,5 +12,5 @@
     [:select {:name "author..."}]
     [:select {:name "performer..."}]
     [:input {:type "date" :placeholder "due date"}]
-    [:button "Cancel"]
+    [:a {:href (rfe/href :orders-index)} "Cancel"]
     [:button "Save"]]])

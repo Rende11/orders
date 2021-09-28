@@ -1,5 +1,6 @@
 (ns orders.pages.index.layout
   (:require [re-frame.core :as rf]
+            [reitit.frontend.easy :as rfe]
             [orders.pages.index.model :as m]))
 
 
@@ -7,7 +8,7 @@
 (defn view []
   (let [orders (rf/subscribe [::m/page])]
     [:div#order-index
-     [:button "Add order"]
+     [:a {:href (rfe/href :orders-new)} "Add order"]
      [:div.orders
       (doall
        (for [o @orders]

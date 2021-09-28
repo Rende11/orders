@@ -2,6 +2,7 @@
  :dependencies [[reagent "1.0.0"]
                 [re-frame "1.2.0"]
                 [re-frisk "1.5.1"]
+                [metosin/reitit-frontend "0.5.15"]
                 [cljs-ajax "0.8.3"]
                 [day8.re-frame/http-fx "0.2.3"]]
  :nrepl        {:port 4444}

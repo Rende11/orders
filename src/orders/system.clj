@@ -89,6 +89,14 @@
 
   (ig/halt! system)
 
+  (do
+    (ig/halt! system)
+    (d/delete-database (d/client {:server-type :dev-local
+                                  :system "dev"}) {:db-name "orders"})
+    (def system
+      (ig/init config))
+    )
+
 
   ((:orders.web/handler system) {:uri "/api/orders"
                                  :request-method :get
