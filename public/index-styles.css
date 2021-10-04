@@ -1,0 +1,60 @@
+#order-index .order {
+    padding: 12px;
+    border: 1px solid #2d2d2d;
+    border-radius: 4px;
+    margin: 0px auto;
+    margin-bottom: 25px;
+    width: 50%;
+    box-sizing: border-box;
+}
+
+#order-index .order-header {
+    display: flex;
+
+}
+
+#order-index .order-users {
+    display: flex;
+    margin-left: auto;
+}
+
+#order-index .order-label {
+    margin-right: 4px;
+    color: gray;
+    font-size: 12px;
+}
+
+#order-index .order-info {
+    margin-right: 12px;
+}
+
+#order-index .order-desc {
+    border-top: 1px solid #a0a0a0;
+    margin-top: 8px;
+    padding-top: 12px;
+}
+
+#order-index .order-index-header {
+    display: flex;
+    width: 50%;
+    margin: 0 auto;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+#order-index .add-href {
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #3e3c3c;
+    border: 1px solid #3e3c3c;
+    border-radius: 2px;
+    padding: 6px 36px;
+}
+
+#order-index .add-href:visited {
+    color: #3e3c3c;
+}
+
+#order-index .add-href:hover {
+    background-color: #dddddd
+}

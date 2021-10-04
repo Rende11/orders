@@ -8,14 +8,17 @@
 (defn view []
   (let [orders (rf/subscribe [::m/page])]
     [:div#order-index
-     [:a {:href (rfe/href :orders-new)} "Add order"]
      [:div.orders
+      [:div.order-index-header
+       [:h3.title "Orders"]
+       [:a.add-href {:href (rfe/href :orders-new)} "add"]]
       (doall
        (for [o @orders]
-         [:div.order {:key (:order/id o)
-                      :style {:border "1px solid black"
-                              :margin "20px"}}
-          [:div.title (:order/title o)]
-          [:div.desc (:order/desc o)]
-          [:div.author (:author/display o)]
-          [:div.performer (:perf/display o)]]))]]))
+         [:div.order {:key (:order/id o)}
+          [:div.order-header
+           [:div.order-title.order-info (:order/title o)]
+           [:div.order-users
+            [:div.order-due-date.order-info [:span.order-label "date:"]  (:order/due-date o)]
+            [:div.order-author.order-info [:span.order-label "author:"] (:author/display o)]
+            [:div.order-performer.order-info [:span.order-label "performer:"] (:perf/display o)]]]
+          [:div.order-desc.order-info (:order/desc o)]]))]]))

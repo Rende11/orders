@@ -1,7 +1,8 @@
 (ns orders.pages.index.model
   (:require [re-frame.core :as rf]
             [ajax.core :as ajax]
-            [day8.re-frame.http-fx]))
+            [day8.re-frame.http-fx]
+            [clojure.string :as str]))
 
 
 (rf/reg-event-fx
@@ -14,17 +15,30 @@
                  :on-success      [::load-orders-success]
                  :on-failure      [::load-orders-fail]}}))
 
+(defn user-display [{:user/keys [name family]}]
+  (str/join " " [name family]))
+
+
+(defn date-display [due-date]
+  (first (str/split (or due-date "") #"T")))
 
 (defn xf-orders [orders]
   (map (fn [o]
-         (assoc o
-                :author/display (str (:author/name o) " " (:author/family o))
-                :perf/display (str (:perf/name o) " " (:perf/family o)))) orders))
+         (-> o
+             (assoc :author/display (user-display (:order/author o))
+                    :perf/display (user-display (:order/performer o)))
+             (update :order/due-date date-display))) orders))
+
+(defn xf-users [users]
+  (map (fn [u]
+         (assoc u :user/display (user-display u))) users))
 
 (rf/reg-event-fx
  ::load-orders-success
  (fn [{db :db} [_ result]]
-   {:db (assoc db :orders (xf-orders result))}))
+   {:db (assoc db
+               :orders (xf-orders (:orders result))
+               :users (xf-users (:users result)))}))
 
 (rf/reg-event-fx
  ::load-orders-fail

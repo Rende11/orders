@@ -1,0 +1,60 @@
+#order-new select:invalid.order-form-field {
+    color: gray;
+}
+
+#order-new input:invalid.order-form-field {
+    color: gray;
+}
+
+#order-new label {
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+
+#order-new .order-form-header {
+    text-align: center;
+    margin-top: 20px;
+}
+#order-new .order-form {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+#order-new .order-form-field {
+    padding: 8px;
+    margin-bottom: 16px;
+}
+
+#order-new .btn-block {
+    display: flex;
+    justify-content: space-between;
+}
+
+#order-new .link-btn  {
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+#order-new a.link-btn:visited {
+    color: #3e3c3c;
+}
+
+
+#order-new .btn {
+    box-sizing: border-box;
+    flex-basis: 45%;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 2px;
+    padding: 6px;
+    border: 1px solid gray;
+}
+
+#order-new .btn:hover {
+    background-color: #dddddd;
+}
