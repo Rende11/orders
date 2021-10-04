@@ -11,7 +11,6 @@
   (GET "/testapp" [] (resource-response "index.html"))
   (context "/api" []
     (GET "/orders" req (order/index req))
-    (GET "/orders/new" req (order/new req))
     (POST "/orders" req (order/create req)))
   (route/files "/")
   (route/resources "/")       
@@ -23,10 +22,5 @@
       (wrap-json-body {:keywords? true})))
 
 
-(comment
-
-  (app {:request-method :get
-        :uri "/js/main.js"})
-  )
 
 

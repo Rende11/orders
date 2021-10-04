@@ -5,32 +5,42 @@
             [orders.web :as web]))
 
 (def initial-data [{:db/id "bruceid"
+                    :user/id (java.util.UUID/randomUUID)
                     :user/name "Bruce"
                     :user/family "Bayne"}
                    {:db/id "lukeid"
+                    :user/id (java.util.UUID/randomUUID)
                     :user/name "Luke"
                     :user/family "Skyworker"}
-                   {:user/name "Serge"
+                   {:user/id (java.util.UUID/randomUUID)
+                    :user/name "Serge"
                     :user/family "Gorelii"}
 
-                   {:order/title "Hello!"
+
+                   {:order/id (java.util.UUID/randomUUID)
+                    :order/title "Hello!"
                     :order/desc "Feature desc"
                     :order/author "bruceid"
-                    :order/performer "lukeid"}
-                   {:order/title "Fix bug"
+                    :order/performer "lukeid"
+                    :order/due-date #inst "2021-10-10T10:10:00.000000Z"}
+
+                   {:order/id (java.util.UUID/randomUUID)
+                    :order/title "Fix bug"
                     :order/desc "Submit button on the index page doesn't works"
                     :order/author "lukeid"
-                    :order/performer "bruceid"}
-                   {:order/title "One more!"
-                    :order/desc "One more time..."}])
-
-
+                    :order/performer "bruceid"
+                    :order/due-date #inst "2021-10-05T13:10:00.000000Z"}])
 (def config
   {::db {:db-conf {:server-type :dev-local
                    :system      "dev"
                    :db-name     "orders"}
          
-         :schema [{:db/ident       :order/title
+         :schema [{:db/ident       :order/id
+                   :db/valueType   :db.type/uuid
+                   :db/cardinality :db.cardinality/one
+                   :db/unique      :db.unique/identity
+                   :db/doc         "The id of order"}
+                  {:db/ident       :order/title
                    :db/valueType   :db.type/string
                    :db/cardinality :db.cardinality/one
                    :db/doc         "The title of the order"}
@@ -51,6 +61,11 @@
                    :db/cardinality :db.cardinality/one
                    :db/doc         "Date of the order"}
 
+                  {:db/ident       :user/id
+                   :db/valueType   :db.type/uuid
+                   :db/cardinality :db.cardinality/one
+                   :db/unique      :db.unique/identity
+                   :db/doc         "The id of order"}
                   {:db/ident       :user/name
                    :db/valueType   :db.type/string
                    :db/cardinality :db.cardinality/one
@@ -59,6 +74,8 @@
                    :db/valueType   :db.type/string
                    :db/cardinality :db.cardinality/one
                    :db/doc         "User family name"}]}
+
+   ::migrations {:db (ig/ref ::db) :data initial-data}
 
    ::server  {:port 9999, :handler (ig/ref ::handler)}
    ::handler {:db (ig/ref ::db)}})
@@ -76,9 +93,10 @@
         _ (d/create-database client db-conf)
         conn (d/connect client db-conf)]
     (d/transact conn {:tx-data schema})
-    (d/transact conn {:tx-data initial-data})
     conn))
 
+(defmethod ig/init-key ::migrations [_ {conn :db data :data}]
+  (d/transact conn {:tx-data data}))
 
 (defmethod ig/halt-key! ::server [_ server]
   (.stop server))
@@ -101,6 +119,7 @@
   ((:orders.web/handler system) {:uri "/api/orders"
                                  :request-method :get
                                  :headers {"accept" "application/json"}})
+
 (d/delete-database (d/client {:server-type :dev-local
                               :system "dev"}) {:db-name "orders"})
 

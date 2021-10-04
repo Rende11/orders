@@ -1,130 +1,94 @@
 (ns orders.api.order
-  (:require [datomic.client.api :as d]))
-
+  (:require [datomic.client.api :as d]
+            [clojure.set :as clj.set]
+            [tick.core :as t]))
 
 
 (defn index [{:keys [conn] :as req}]
-  (let [db (d/db conn)
+  (let [db     (d/db conn)
         orders (d/q
-                    '[:find ?id ?title ?desc ?author-name ?author-family ?performer-name ?performer-family
-                      :keys order/id order/title order/desc author/name author/family perf/name perf/family
-                      :where
-                      [?id :order/title ?title]
-                      [?id :order/desc ?desc]
-                      [?id :order/author ?aid]
-                      [?id :order/performer ?pid]
-
-                      [?aid :user/name ?author-name]
-                      [?aid :user/family ?author-family]
-
-                      [?pid :user/name ?performer-name]
-                      [?pid :user/family ?performer-family]]
-                    db)]
+                '[:find (pull ?id [:order/id :order/title :order/desc :order/due-date
+                                   {:order/author    [:user/id :user/name :user/family]
+                                    :order/performer [:user/id :user/name :user/family]}])
+                  :where
+                  [?id :order/id]]
+                db)
+        users  (d/q
+               '[:find ?uuid ?name ?family
+                 :keys user/id user/name user/family
+                 :where
+                 [?id :user/id ?uuid]
+                 [?id :user/name ?name]
+                 [?id :user/family ?family]]
+               db)]
     {:status 200
-     :body orders}))
+     :body   {:orders (flatten orders)
+              :users  users}}))
 
+(defn ->inst [date]
+  (t/inst (t/at (t/date date) (t/time "12:00"))))
 
-(defn new [req]
-  {:status 200
-   :body "Form for create"})
+(defn ->uuid [s]
+  (java.util.UUID/fromString s))
+
+(defn ->order [raw-order]
+  (-> (into {} (map (fn [[k v]] {(keyword "order" (name k)) v})) raw-order)
+      (update :order/author #(clj.set/rename-keys % {:id :user/id}))
+      (update :order/performer #(clj.set/rename-keys % {:id :user/id}))
+      (update :order/due-date ->inst)
+      (update-in [:order/author :user/id] ->uuid)
+      (update-in [:order/performer :user/id] ->uuid)
+      (assoc :order/id (java.util.UUID/randomUUID))))
 
 (defn create [{:keys [conn body] :as req}]
-  (def r req)
-  (let [db (d/db conn)]
-    {:status 201
-     :body "Created"}))
-
-
+  (let [order (->order body)]
+    (try
+      (d/transact conn {:tx-data [order]})
+      {:status 201
+       :body order}
+      (catch Exception e
+        {:status 400
+         :body {:error (.getMessage e)}}))))
 
 
 (comment
 
   (def client (d/client {:server-type :dev-local
                        :system "dev"}))
-  (d/create-database client {:db-name "movies"})
 
   (def conn (d/connect client {:db-name "orders"}))
 
-  (d/transact )
+  (d/q
+   '[:find (pull ?id [*]) 
+     :where [?id :order/id _]]
+   (d/db conn))
+
+  (def smp
+    {:order/title "Tteteteett",
+     :order/desc "asdasdad",
+     :order/author {:user/id #uuid "4d62d121-33d0-4688-a4d4-121316ae51bf"},
+     :order/performer {:user/id #uuid "90d42373-bebd-4013-907b-955438c05d72"},
+     :order/due-date #inst "2021-10-02T09:00:00.000-00:00",
+     :order/id #uuid "cfe1bc5a-d8f1-48a1-a06e-af0a2662c355"})
+  (def smp-2
+    {:order/title "Go to supermarket",
+     :order/desc "Go to supermarket",
+     :order/author {:user/id #uuid "90d42373-bebd-4013-907b-955438c05d72"},
+     :order/performer
+     {:user/id #uuid "80d42373-bebd-4013-907b-955438c05d72"},
+     :order/due-date #inst "2021-10-06T09:00:00.000-00:00",
+     :order/id #uuid "9136cbd7-e830-430c-a9c5-cc1a5346ee40"})
+   
+  (:tx-data (d/transact conn {:tx-data [smp-2]}))
+
+
 
 
 
 
 
   
-  (d/q
-                    '[:find ?title ?desc
-                      ?author-name ?author-family
-                      ?performer-name ?performer-family
-                      :where
-                      [?id :order/title ?title]
-                      [?id :order/desc ?desc]
-                      [?id :order/author ?aid]
-                      [?id :order/performer ?pid]
-
-                      [?aid :user/name ?author-name]
-                      [?aid :user/family ?author-family]
-
-                      [?pid :user/name ?performer-name]
-                      [?pid :user/family ?performer-family]]
-                    (d/db conn))
 
 
 
-  (def movie-schema [{:db/ident :movie/title
-                      :db/valueType :db.type/string
-                      :db/cardinality :db.cardinality/one
-                      :db/doc "The title of the movie"}
-
-                     {:db/ident :movie/genre
-                      :db/valueType :db.type/string
-                      :db/cardinality :db.cardinality/many
-                      :db/doc "The genre of the movie"}
-
-                     {:db/ident :movie/release-year
-                      :db/valueType :db.type/long
-                      :db/cardinality :db.cardinality/one
-                      :db/doc "The year the movie was released in theaters"}])
-
-  (d/transact conn {:tx-data movie-schema})
-
-  (def first-movies [{:movie/title "The Goonies"
-                      :movie/genre "action/adventure"
-                      :movie/release-year 1985}
-                     {:movie/title "Commando"
-                      :movie/genre "thriller/action"
-                      :movie/release-year 1985}
-                     {:movie/title "Repo Man"
-                      :movie/genre "punk dystopia"
-                      :movie/release-year 1984}])
-
-  (d/transact conn {:tx-data first-movies})
-
-  (d/transact conn {:tx-data [{:movie/title "Totoro"}]})
-
-  (def db (d/db conn))
-
-  (def all-titles-q '[:find ?movie-title 
-                      :where [_ :movie/title ?movie-title]])
-
-  (d/q all-titles-q db)
-
-
-  (d/q
-   '[:find ?id ?t
-     :where [?id :movie/title ?t]]
-   db)
-
-  (def more-genres [{:movie/title "Commando"
-                     :movie/genre "comedy"}])
-
-  (d/transact conn {:tx-data more-genres})
-
-  (def orders [{:order/title "Fix bug"
-                :order/desc "Please someone fix the issue #111"}
-               {:order/title "Develop new feature"
-                :order/desc "We need to add profile page"}
-               ])
-
-  (d/transact conn {:tx-data orders})
   )
