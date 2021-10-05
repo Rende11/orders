@@ -2,7 +2,6 @@
   (:require [reagent.dom :as rdom]
             [reagent.core :as r]
             [re-frame.core :as rf]
-            [orders.model :as m]
             [orders.routes :as rt]
             [reitit.frontend :as rfr]
             [reitit.frontend.easy :as rfe]))
@@ -24,8 +23,9 @@
   []
   (rfe/start!
    (rfr/router rt/routes)
-   (fn [m] (prn m)
-     (reset! match m))
+   (fn [m]
+     (reset! match m)
+     (when-let [evt (-> m :data :event)]
+       (rf/dispatch [evt])))
    {:use-fragment true})
-  (rf/dispatch-sync [::m/initialize])
   (render))

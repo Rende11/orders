@@ -10,7 +10,8 @@
      [:h3.order-form-header "Create new order"]
      [:form.order-form {:on-submit #(do
                                       (.preventDefault %)
-                                      (rf/dispatch [::m/submit]))}
+                                      (rf/dispatch [::m/submit]))
+                        :autoComplete "off"}
 
       [:label.required {:for "title-inp"} "Title"]
       [:input.order-form-field
@@ -23,6 +24,7 @@
       [:label.required {:for "desc-inp"} "Description"]
       [:textarea.order-form-field
        {:required true
+        :rows 5
         :id "desc-inp"
         :on-change #(rf/dispatch [::m/field-update [:order/desc] (-> % .-target .-value)])}]
 
