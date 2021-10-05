@@ -1,4 +1,4 @@
-{:paths ["src" "public"]
+{:paths ["src" "public" "classes"]
  :deps {org.clojure/clojure     {:mvn/version "1.10.3"}
         ring/ring-core          {:mvn/version "1.9.4"}
         ring/ring-jetty-adapter {:mvn/version "1.9.4"}
@@ -19,4 +19,9 @@
            :test
            {:extra-deps  {lambdaisland/kaocha {:mvn/version "1.0.861"}}
             :extra-paths ["test"]
-            :main-opts   ["-m" "kaocha.runner"]}}}
+            :main-opts   ["-m" "kaocha.runner"]}
+
+           :build
+           {:replace-deps {uberdeps/uberdeps {:mvn/version "1.1.0"}}
+            :replace-paths []
+            :main-opts ["-m" "uberdeps.uberjar"]}}}

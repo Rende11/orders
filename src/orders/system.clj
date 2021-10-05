@@ -85,6 +85,7 @@
 
 
 (defmethod ig/init-key ::server [_ {:keys [handler port]}]
+  (prn (str "Server is launching on port: " port))
   (jetty/run-jetty handler {:port port :join? false}))
 
 (defmethod ig/init-key ::handler [_ {:keys [db]}]
@@ -104,26 +105,24 @@
 (defmethod ig/halt-key! ::server [_ server]
   (.stop server))
 
+(defn start []
+  (ig/init config))
+
+(defn stop [sys]
+  (ig/halt! sys))
+
 (comment
   (def system
-    (ig/init config))
+    (start))
 
-  (ig/halt! system)
+  (stop system)
 
-  (do
-    (ig/halt! system)
-    (d/delete-database (d/client {:server-type :dev-local
-                                  :system "dev"}) {:db-name "orders"})
-    (def system
-      (ig/init config))
-    )
-
-
+  (d/delete-database (d/client {:server-type :dev-local
+                                :system "dev"}) {:db-name "orders"})
+  
+  
   ((:orders.web/handler system) {:uri "/api/orders"
                                  :request-method :get
                                  :headers {"accept" "application/json"}})
-
-(d/delete-database (d/client {:server-type :dev-local
-                              :system "dev"}) {:db-name "orders"})
 
   )

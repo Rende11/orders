@@ -42,7 +42,6 @@
    {:db (assoc db :error result)}))
 
 
-
 (rf/reg-sub
  ::page
  (fn [db _]
