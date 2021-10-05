@@ -12,18 +12,9 @@
                                     :order/performer [:user/id :user/name :user/family]}])
                   :where
                   [?id :order/id]]
-                db)
-        users  (d/q
-               '[:find ?uuid ?name ?family
-                 :keys user/id user/name user/family
-                 :where
-                 [?id :user/id ?uuid]
-                 [?id :user/name ?name]
-                 [?id :user/family ?family]]
-               db)]
+                db)]
     {:status 200
-     :body   {:orders (flatten orders)
-              :users  users}}))
+     :body   (flatten orders)}))
 
 (defn ->inst [date]
   (t/inst (t/at (t/date date) (t/time "12:00"))))

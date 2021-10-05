@@ -4,27 +4,30 @@
             [datomic.client.api :as d]
             [orders.web :as web]))
 
+(defn uuid []
+  (java.util.UUID/randomUUID))
+
 (def initial-data [{:db/id "bruceid"
-                    :user/id (java.util.UUID/randomUUID)
+                    :user/id (uuid)
                     :user/name "Bruce"
                     :user/family "Bayne"}
                    {:db/id "lukeid"
-                    :user/id (java.util.UUID/randomUUID)
+                    :user/id (uuid)
                     :user/name "Luke"
                     :user/family "Skyworker"}
-                   {:user/id (java.util.UUID/randomUUID)
+                   {:user/id (uuid)
                     :user/name "Serge"
                     :user/family "Gorelii"}
 
 
-                   {:order/id (java.util.UUID/randomUUID)
+                   {:order/id (uuid)
                     :order/title "Hello!"
                     :order/desc "Feature desc"
                     :order/author "bruceid"
                     :order/performer "lukeid"
                     :order/due-date #inst "2021-10-10T10:10:00.000000Z"}
 
-                   {:order/id (java.util.UUID/randomUUID)
+                   {:order/id (uuid)
                     :order/title "Fix bug"
                     :order/desc "Submit button on the index page doesn't works"
                     :order/author "lukeid"

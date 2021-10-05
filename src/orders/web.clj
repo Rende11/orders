@@ -3,7 +3,8 @@
             [ring.util.response :refer [resource-response]]
             [compojure.core :refer [defroutes GET POST context]]
             [compojure.route :as route]
-            [orders.api.order :as order]))
+            [orders.api.order :as order]
+            [orders.api.user :as user]))
 
 
 (defroutes app-routes
@@ -11,7 +12,8 @@
   (GET "/testapp" [] (resource-response "index.html"))
   (context "/api" []
     (GET "/orders" req (order/index req))
-    (POST "/orders" req (order/create req)))
+    (POST "/orders" req (order/create req))
+    (GET "/users" req (user/index req)))
   (route/files "/")
   (route/resources "/")       
   (route/not-found "<h1>Resource not found</h1>"))
