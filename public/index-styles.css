@@ -16,6 +16,7 @@
 #order-index .order-users {
     display: flex;
     margin-left: auto;
+    flex-shrink: 0;
 }
 
 #order-index .order-label {

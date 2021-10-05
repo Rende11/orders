@@ -6,6 +6,9 @@
     color: gray;
 }
 
+
+
+
 #order-new label {
     margin-bottom: 4px;
     font-size: 12px;
@@ -26,7 +29,13 @@
 #order-new .order-form-field {
     padding: 8px;
     margin-bottom: 16px;
+    font-family: 'Roboto', sans-serif;
 }
+
+#order-new textarea.order-form-field {
+    resize: vertical;
+}
+
 
 #order-new .btn-block {
     display: flex;
