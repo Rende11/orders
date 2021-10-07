@@ -92,6 +92,7 @@
   (fn [req]
     (web/app (assoc req :conn db))))
 
+
 (defmethod ig/init-key ::db [_ {:keys [db-conf schema]}]
   (let [client (d/client db-conf)
         _ (d/create-database client db-conf)
@@ -99,8 +100,16 @@
     (d/transact conn {:tx-data schema})
     conn))
 
+(defn already-has-data? [conn]
+  (when-let [count (ffirst (d/q
+                            '[:find (count ?id)
+                              :where [?id :order/id]]
+                            (d/db conn)))]
+    (pos? count)))
+
 (defmethod ig/init-key ::migrations [_ {conn :db data :data}]
-  (d/transact conn {:tx-data data}))
+  (when-not (already-has-data? conn)
+    (d/transact conn {:tx-data data})))
 
 (defmethod ig/halt-key! ::server [_ server]
   (.stop server))
