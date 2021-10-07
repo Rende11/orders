@@ -1,20 +1,22 @@
 (ns orders.api.order
   (:require [datomic.client.api :as d]
             [clojure.set :as clj.set]
-            [tick.core :as t]))
+            [tick.core :as t]
+            [clojure.core.async :as a]))
 
 
 (defn index [{:keys [conn] :as req}]
-  (let [db     (d/db conn)
-        orders (d/q
-                '[:find (pull ?id [:order/id :order/title :order/desc :order/due-date
-                                   {:order/author    [:user/id :user/name :user/family]
-                                    :order/performer [:user/id :user/name :user/family]}])
-                  :where
-                  [?id :order/id]]
-                db)]
-    {:status 200
-     :body   (flatten orders)}))
+  (a/go
+    (let [db     (d/db conn)
+          orders (d/q
+                  '[:find (pull ?id [:order/id :order/title :order/desc :order/due-date
+                                     {:order/author    [:user/id :user/name :user/family]
+                                      :order/performer [:user/id :user/name :user/family]}])
+                    :where
+                    [?id :order/id]]
+                  db)]
+      {:status 200
+       :body   (flatten orders)})))
 
 (defn ->inst [date]
   (t/inst (t/at (t/date date) (t/time "12:00"))))
@@ -32,45 +34,32 @@
       (assoc :order/id (java.util.UUID/randomUUID))))
 
 (defn create [{:keys [conn body] :as req}]
-  (let [order (->order body)]
-    (try
-      (d/transact conn {:tx-data [order]})
-      {:status 201
-       :body order}
-      (catch Exception e
-        {:status 400
-         :body {:error (.getMessage e)}}))))
+  (a/go
+    (let [order (->order body)]
+      (try
+        (d/transact conn {:tx-data [order]})
+        {:status 201
+         :body order}
+        (catch Exception e
+          {:status 400
+           :body {:error (.getMessage e)}})))))
 
 
 (comment
-
   (def client (d/client {:server-type :dev-local
-                       :system "dev"}))
+                         :system "dev"}))
 
   (def conn (d/connect client {:db-name "orders"}))
 
   (d/q
-   '[:find (pull ?id [*]) 
-     :where [?id :order/id _]]
-   (d/db conn))
+   '[:find (count ?id) 
+     :where [?id :order/id]]
+   (d/db conn)))
 
-  (def smp
-    {:order/title "Tteteteett",
-     :order/desc "asdasdad",
-     :order/author {:user/id #uuid "4d62d121-33d0-4688-a4d4-121316ae51bf"},
-     :order/performer {:user/id #uuid "90d42373-bebd-4013-907b-955438c05d72"},
-     :order/due-date #inst "2021-10-02T09:00:00.000-00:00",
-     :order/id #uuid "cfe1bc5a-d8f1-48a1-a06e-af0a2662c355"})
-  (def smp-2
-    {:order/title "Go to supermarket",
-     :order/desc "Go to supermarket",
-     :order/author {:user/id #uuid "90d42373-bebd-4013-907b-955438c05d72"},
-     :order/performer
-     {:user/id #uuid "80d42373-bebd-4013-907b-955438c05d72"},
-     :order/due-date #inst "2021-10-06T09:00:00.000-00:00",
-     :order/id #uuid "9136cbd7-e830-430c-a9c5-cc1a5346ee40"})
+  
+  
    
-  (:tx-data (d/transact conn {:tx-data [smp-2]}))
+  
 
 
 
@@ -82,4 +71,3 @@
 
 
 
-  )
