@@ -15,24 +15,46 @@
                     :user/id (uuid)
                     :user/name "Luke"
                     :user/family "Skyworker"}
-                   {:user/id (uuid)
+                   {:db/id "sergeid"
+                    :user/id (uuid)
                     :user/name "Serge"
                     :user/family "Gorelii"}
-
+                   {:db/id "mikeid"
+                    :user/id (uuid)
+                    :user/name "Mike"
+                    :user/family "Thompson"}
+                   {:db/id "gloriaid"
+                    :user/id (uuid)
+                    :user/name "Gloria"
+                    :user/family "Johnes"}
 
                    {:order/id (uuid)
-                    :order/title "Hello!"
-                    :order/desc "Feature desc"
+                    :order/title "Buy food for the office"
+                    :order/desc "We don't have enough milk and we ran out of coffee and donuts"
                     :order/author "bruceid"
                     :order/performer "lukeid"
                     :order/due-date #inst "2021-10-10T10:10:00.000000Z"}
 
                    {:order/id (uuid)
-                    :order/title "Fix bug"
-                    :order/desc "Submit button on the index page doesn't works"
+                    :order/title "Add light/dark theme support"
+                    :order/desc "There should be a switch to select the theme and color design"
                     :order/author "lukeid"
                     :order/performer "bruceid"
-                    :order/due-date #inst "2021-10-05T13:10:00.000000Z"}])
+                    :order/due-date #inst "2021-10-12T13:10:00.000000Z"}
+
+                   {:order/id (uuid)
+                    :order/title "Start an advertising campaign"
+                    :order/desc "We need advertising on all major websites and platforms"
+                    :order/author "lukeid"
+                    :order/performer "sergeid"
+                    :order/due-date #inst "2021-10-14T13:10:00.000000Z"}
+
+                   {:order/id (uuid)
+                    :order/title "Order coffee for a corporate party"
+                    :order/desc "A small cafe will ok"
+                    :order/author "mikeid"
+                    :order/performer "gloriaid"
+                    :order/due-date #inst "2021-10-15T13:10:00.000000Z"}])
 (def config
   {::db {:db-conf {:server-type :dev-local
                    :system      "dev"
@@ -130,8 +152,8 @@
                                 :system "dev"}) {:db-name "orders"})
   
   
-  ((:orders.web/handler system) {:uri "/api/orders"
-                                 :request-method :get
-                                 :headers {"accept" "application/json"}})
+  ((:orders.system/handler system) {:uri "/api/orders"
+                                    :request-method :get
+                                    :headers {"accept" "application/json"}})
 
   )
