@@ -8,9 +8,9 @@
 
 
 ### Installation steps
-#### Install datomic-dev (v "0.9.235")
+#### Install datomic-dev (my version is "0.9.235")
 - https://docs.datomic.com/cloud/dev-local.html
-
+(probably you have to update deps with your version)
 
 #### Build jar
 ```

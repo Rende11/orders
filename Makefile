@@ -18,7 +18,7 @@ test:
 build: 
 	rm -rf ./classes
 	mkdir ./classes
-	clojure -M -e "(compile 'orders.core)"
+	clojure -e "(compile 'orders.core)"
 	clojure -A:build --main-class orders.core --target ./target/testapp.jar
 
 jar: install release build
