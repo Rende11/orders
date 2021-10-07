@@ -18,11 +18,15 @@
     :user/name "Serge"
     :user/family "Gorelii"}])
 
+
 (def testing-config
   (-> system/config
       (dissoc ::system/server)
       (assoc-in [::system/migrations :data] initial-data)
-      (assoc-in [::system/db :db-conf :db-name] "orders-test")))
+      (assoc-in [::system/db :db-conf] {:db-name "orders-test"
+                                        :system "test"
+                                        :storage-dir :mem
+                                        :server-type :dev-local})))
 
 (defn db-clean-up! [cfg]
   (let [db-conf (-> cfg ::system/db :db-conf)]

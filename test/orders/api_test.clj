@@ -6,19 +6,19 @@
 (use-fixtures :each st/testing-env)
 
 (deftest test-index-ok
-  (testing "index page is avaliable on root"
-    (def index  ((st/get-app) {:request-method :get
-                               :uri "/"}))
-
-    (is (= 200 (:status index)))
-    (is (not-empty (slurp (:body index)))))
-
   (testing "index page is avaliable /testapp"
     (def index  ((st/get-app) {:request-method :get
                                :uri "/testapp"}))
 
     (is (= 200 (:status index)))
-    (is (not-empty (slurp (:body index))))))
+    (is (not-empty (slurp (:body index)))))
+
+  (testing "redirect from root"
+    (def index  ((st/get-app) {:request-method :get
+                               :uri "/"}))
+
+    (is (= 302 (:status index)))
+    (is (= "/testapp" (get-in index [:headers "Location"])))))
 
 
 (deftest test-orders-create-ok
@@ -27,7 +27,7 @@
                                :uri "/api/orders"}))
 
     (is (= 200 (:status orders)))
-    (is (= [] (:orders (json/parse-string (:body orders) true)))))
+    (is (empty? (json/parse-string (:body orders) true))))
 
   (testing "create order"
     (def order ((st/get-app) {:request-method :post
@@ -64,6 +64,9 @@
             :order/due-date "2021-10-04T09:00:00Z"}
 
            (-> (json/parse-string (:body orders) true)
-               :orders
                first
                (dissoc :order/id))))))
+
+(comment
+  (clojure.test/run-tests)
+  )
