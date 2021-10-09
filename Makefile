@@ -4,6 +4,7 @@ install:
 	npm install
 
 release:
+	rm -rf ./resources/public/js
 	npx shadow-cljs release app
 
 ui:
