@@ -15,11 +15,11 @@
      [page]]))
 
 
-(defn ^:dev/after-load render []
+(defn render []
   (rdom/render [app] (.getElementById js/document "root")))
 
 
-(defn ^:export init
+(defn ^:export ^:dev/after-load init
   []
   (rfe/start!
    (rfr/router rt/routes)

@@ -6,9 +6,11 @@
                 [cljs-ajax "0.8.3"]
                 [day8.re-frame/http-fx "0.2.3"]]
  :nrepl        {:port 4444}
- :dev-http     {3030 "public"}
+ :dev-http     {3030 "resources/public"}
  :builds
  {:app
-  {:devtools {:preloads [re-frisk.preload]}
+  {:devtools {:preloads [re-frisk.preload]
+              :whatch-dir "resources/public"}
    :target :browser
+   :output-dir "resources/public/js"
    :modules {:main {:init-fn orders.app/init}}}}}
