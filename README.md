@@ -24,6 +24,12 @@ make run
 
 #### App avaliable on http://localhost:9999
 
+### Missing parts
+####
+- Error handling
+- Data validation
+- UI tests
+- Configuration from envs
 
 ### Useful commands and local development
 
