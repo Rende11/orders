@@ -50,13 +50,14 @@
                     :order/due-date #inst "2021-10-14T13:10:00.000000Z"}
 
                    {:order/id (uuid)
-                    :order/title "Order coffee for a corporate party"
+                    :order/title "Order cafe for a corporate party"
                     :order/desc "A small cafe will ok"
                     :order/author "mikeid"
                     :order/performer "gloriaid"
                     :order/due-date #inst "2021-10-15T13:10:00.000000Z"}])
 (def config
   {::db {:db-conf {:server-type :dev-local
+                   :storage-dir :mem
                    :system      "dev"
                    :db-name     "orders"}
          
@@ -149,6 +150,7 @@
   (stop system)
 
   (d/delete-database (d/client {:server-type :dev-local
+                                :storage-dir :mem
                                 :system "dev"}) {:db-name "orders"})
   
   
