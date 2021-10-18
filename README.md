@@ -6,7 +6,7 @@
 - clojure
 - datomic dev
 
-### [Already built jar app](https://drive.google.com/file/d/1iup08ek75fupHLPb4y6ugHkjP_T2lWyJ/view?usp=sharing)
+### [Already built jar app](https://drive.google.com/file/d/1iup08ek75fupHLPb4y6ugHkjP_T2lWyJ/view?usp=sharing) (preferable approach for demo)
 
 ### Installation steps
 #### Install datomic-dev (my version is "0.9.235")
